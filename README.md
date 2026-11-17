@@ -17,37 +17,6 @@ The chatbot reads documents, splits their content into smaller chunks, generates
 - Groq API
 - Python dotenv
 
-## Project Structure
-
-```text
-mini_rag_chatbot/
-│
-├── app/
-│   ├── loader/
-│   │   └── document_loader.py
-│   │
-│   ├── chunks/
-│   │   └── document_chunker.py
-│   │
-│   ├── embeddings/
-│   │   └── document_embed.py
-│   │
-│   ├── retriever/
-│   │   └── retriever.py
-│   │
-│   ├── llm.py
-│   │
-│   ├── memory/
-│   │   └── conversation_memory.py
-│   │
-│   └── main.py
-│
-├── docs/
-│
-├── .env
-├── .gitignore
-├── requirements.txt
-└── README.md
 ```
 
 ## How It Works
