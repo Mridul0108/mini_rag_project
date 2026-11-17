@@ -10,7 +10,10 @@ from app.llm import generate_response
 from app.memory.conversation_memory import ConversationMemory
 
 
-memory = ConversationMemory(max_messages=20)
+memory = ConversationMemory(
+    session_id="default",
+    max_messages=20
+)
 
 documents = load_documents()
 
@@ -59,7 +62,10 @@ if __name__ == "__main__":
     while True:
         question = input("\nYou: ")
 
-        if question.lower() in ["exit", "quit"]:
+        if question == "exit":
+            break
+
+        if question.lower().strip() in ["exit", "quit", "exit()", "quit()"]:
             print("Chatbot stopped.")
             break
 
