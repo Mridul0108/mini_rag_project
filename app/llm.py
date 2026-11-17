@@ -12,40 +12,45 @@ client = Groq(
 MODEL = "openai/gpt-oss-120b"
 
 
-def generate_response(question, retrieved_chunks):
+def generate_response(question, retrieved_chunks, conversation_history):
 
     context = "\n\n".join(
         chunk["chunk"] for chunk in retrieved_chunks
     )
 
-    prompt = f"""
-    You are a document-based assistant.
+    messages = [
+        {
+            "role": "system",
+            "content": f"""
+            You are a document-based assistant.
 
-    Answer the question using only the context provided below.
-    If the answer is not available in the context, say that you don't know.
+            Answer the question using only the provided document context.
+            If the answer is not available in the context,
+            say that you don't know.
+
+            Use conversation history to understand follow-up questions,
+            but do not treat previous assistant answers as factual evidence.
+
+            Context:
+            {context}
+            """
+        }
+    ]
+
     
+    messages.extend(conversation_history)
 
-    Context:
-    {context}
-
-    Question:
-    {question}
-
-    Answer:
-    """
+    
+    messages.append({
+        "role": "user",
+        "content": question
+    })
 
     response = client.chat.completions.create(
         model=MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
+        messages=messages,
         temperature=0.3,
         max_completion_tokens=512
     )
 
     return response.choices[0].message.content
-
-

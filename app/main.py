@@ -4,16 +4,17 @@ from app.chunks.document_chunker import chunk_text
 from app.embeddings.document_embed import (
     generate_embeddings,
     generate_query_embedding
-    )
+)
 from app.retriever.document_retriever import retrieve_chunks
 from app.llm import generate_response
+from app.memory.conversation_memory import ConversationMemory
 
 
+memory = ConversationMemory(max_messages=20)
 
 documents = load_documents()
 
 print(f"Loaded {len(documents)} documents")
-
 
 all_chunks = []
 
@@ -23,19 +24,14 @@ for document in documents:
 
 print(f"Generated {len(all_chunks)} chunks")
 
-
-
 embeddings = generate_embeddings(all_chunks)
 
 print("Document embeddings generated successfully")
 
 
-
 def ask_question(question):
 
-
     query_embedding = generate_query_embedding(question)
-
 
     retrieved_chunks = retrieve_chunks(
         query_embedding,
@@ -44,16 +40,20 @@ def ask_question(question):
         top_k=3
     )
 
- 
+    conversation_history = memory.get_history()
+
     answer = generate_response(
         question,
-        retrieved_chunks
+        retrieved_chunks,
+        conversation_history
     )
+
+    memory.add_message("user", question)
+    memory.add_message("assistant", answer)
 
     return answer
 
 
-# Step 5: Run the chatbot
 if __name__ == "__main__":
 
     while True:
